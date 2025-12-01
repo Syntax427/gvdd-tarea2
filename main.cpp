@@ -30,7 +30,7 @@ vector<int> leerDatos(string nombreArchivo) {
 // cuantos elementos son menores que x
 int obtenerRankReal(const vector<int>& datosOrdenados, int x) {
     // lower_bound retorna el primer elemento >= x. 
-    // la distancia desde el inicio es la cantidad de elementos < x.
+    // La distancia desde el inicio es la cantidad de elementos < x.
     auto it = lower_bound(datosOrdenados.begin(), datosOrdenados.end(), x);
     return distance(datosOrdenados.begin(), it);
 }
@@ -80,20 +80,24 @@ void ejecutarExperimento(string nombreArchivo, vector<double> epsilons) {
         }
 
         //error de quantile
-        // prueba quantiles desde 0.01 hasta 0.99
+        // prueba quantiles desde 0.05 hasta 0.95
         for (double phi = 0.05; phi < 1.0; phi += 0.05) {
             int valEst = sketch.quantile(phi);
             
-            // el valor real del quantil phi
             int idxReal = floor(phi * n);
             if(idxReal >= n) idxReal = n-1;
             int valReal = datosOrdenados[idxReal];
+            int errorValor = abs(valEst - valReal);
 
-            // Para medir el error de quantil se mide la diferencia
-            // entre el valor retornado y el valor real
+            int rankDelEstimado = obtenerRankReal(datosOrdenados, valEst);
+            int rankObjetivo = phi * n;
+            int errorRankEnQuantil = abs(rankDelEstimado - rankObjetivo);
+            
+            double limiteTeorico = eps * n;
+
             salida << eps << ",QUANTILE," << phi << "," << valEst << "," 
-                   << valReal << "," << abs(valEst - valReal) << "," 
-                   << "NA" << "," << "NA" << "\n";
+                   << valReal << "," << errorValor << "," 
+                   << errorRankEnQuantil << "," << limiteTeorico << "\n";
         }
     }
     cout << "  Resultados guardados en " << nombreSalida << endl << endl;
