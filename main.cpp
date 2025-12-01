@@ -79,7 +79,7 @@ void ejecutarExperimento(string nombreArchivo, vector<double> epsilons) {
                    << (double)error/n << "," << limiteTeorico << "\n";
         }
 
-        //error de quantile
+        // error de quantile
         // prueba quantiles desde 0.05 hasta 0.95
         for (double phi = 0.05; phi < 1.0; phi += 0.05) {
             int valEst = sketch.quantile(phi);
